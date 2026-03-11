@@ -3,9 +3,9 @@ import { ThemeProvider } from '@/components/ThemeProvider';
 import '@/styles/globals.css';
 
 export const metadata: Metadata = {
-  title: 'Оля — Продуктовый дизайнер',
+  title: 'Ольга Солонина',
   description:
-    'Более 2-х лет в продуктовом дизайне. Думаю как дизайнер, понимаю как разработчик.',
+    'Более 2-х лет в продуктовом дизайне. Думаю как дизайнер, понимаю как разработчик.'
 };
 
 export default function RootLayout({
