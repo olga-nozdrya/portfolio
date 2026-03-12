@@ -364,7 +364,7 @@ body {
   flex-shrink: 0;
   transition: background 0.2s, border-color 0.2s;
 }
-.case-card:hover .cc-arr { background: var(--t1); color: var(--bg); border-color: var(--t1); }
+.case-card:hover .cc-arrow { background: var(--t1); color: var(--bg); border-color: var(--t1); }
 .cc-vis {
   flex: 1;
   min-height: 320px;
