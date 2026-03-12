@@ -223,7 +223,6 @@ export default function HomeClient() {
             </div>
           </div>
 
-          <div className="sec-divider" />
           <div className="mob-contact">
             <ContactSection />
           </div>
