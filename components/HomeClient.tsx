@@ -117,7 +117,7 @@ export default function HomeClient() {
             {NAV_ITEMS.map((n) => (
               <button
                 key={n.id}
-                className={`bm-link${active === n.id ? ' active' : ''}`}
+                className={`bm-link`}
                 onClick={() => scrollTo(n.id)}
               >
                 {n.label}
