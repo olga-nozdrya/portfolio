@@ -368,7 +368,6 @@ body {
 .case-card:hover .cc-arrow { background: var(--t1); color: var(--bg); border-color: var(--t1); }
 .cc-vis {
   flex: 1;
-  min-height: 320px;
   border-radius: 14px;
   overflow: hidden;
 }
@@ -376,7 +375,6 @@ body {
 .cc-vis-inner {
   width: 100%;
   height: 100%;
-  min-height: 320px;
   transition: transform 0.6s var(--ease);
 }
 
@@ -906,7 +904,6 @@ body {
   .pf-section:last-child { padding-bottom: 60px; }
   .sec-divider { margin: 0 64px; }
   .case-card { min-height: auto; margin-bottom: 16px; gap:0px; }
-  .cc-vis { min-height: 200px; }
   .phone-mock { width: 100px; }
   .cta-block { margin: 0 24px; padding: 32px 24px; }
 .cp-nav {
@@ -989,10 +986,6 @@ body {
   .pf-photo-wrap {
     display: none;
   }
-  .cc-vis {
-  min-height: 180px;
-  max-height: 400px;
-}
 
 .cc-brand {
   align-items: flex-start;
@@ -1020,7 +1013,6 @@ body {
 .cc-vis-inner {
   width: fit-content;
   height: auto;
-  min-height: unset;
   margin: 0 auto;
 }
 
@@ -1079,6 +1071,5 @@ body {
   .cta-block { margin: 0 36px; padding: 40px 36px; }
   .cp-nav { padding: 0 36px; }
   .cp-body { padding: 40px 36px 100px; }
-  .cc-vis { min-height: 240px; }
   .phone-mock { width: 115px; }
 }
