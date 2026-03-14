@@ -369,7 +369,6 @@ body {
 .cc-vis {
   flex: 1;
   min-height: 320px;
-  max-height: 460px;
   border-radius: 14px;
   overflow: hidden;
 }
