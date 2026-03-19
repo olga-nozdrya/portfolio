@@ -10,7 +10,14 @@ interface Props {
 }
 
 export default function CaseCard({ c }: { c: CaseData }) {
+  const [loaded, setLoaded] = useState(false);
+  const imgRef = useRef<HTMLImageElement>(null);
   const router = useRouter();
+  useEffect(() => {
+  if (imgRef.current?.complete) {
+    setLoaded(true);
+  }
+  }, []);
   return (
     <div className="case-card" onClick={() => router.push(`/cases/${c.slug}`)}>
       <div className="cc-tags">
@@ -20,7 +27,14 @@ export default function CaseCard({ c }: { c: CaseData }) {
       </div>
       <div className="cc-vis">
   <div className="cc-vis-inner">
-    <img src={`/covers/${c.slug}.png`} alt={c.brand} />
+      {!loaded && <div className="skeleton" style={{ position: 'absolute', inset: 0 }} />}
+      <img
+      ref={imgRef}
+      src={`/covers/${c.slug}.png`}
+      alt={c.brand}
+      onLoad={() => setLoaded(true)}
+      style={{ opacity: loaded ? 1 : 0, transition: 'opacity 0.3s' }}
+  />
   </div>
 </div>
 <div className="cc-footer">
