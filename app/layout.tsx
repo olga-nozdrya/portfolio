@@ -17,17 +17,24 @@ export default function RootLayout({
     <html lang="ru" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{
-          __html: `
-            (function() {
-              try {
-                var theme = localStorage.getItem('theme');
-                if (theme === 'dark') {
+        __html: `
+          (function() {
+            try {
+              var saved = localStorage.getItem('theme');
+              if (saved === 'dark') {
+                document.documentElement.classList.add('dark');
+              } else if (saved === 'light') {
+                // светлая — ничего не делаем
+              } else {
+                // нет сохранённой — смотрим системные настройки
+                if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
                   document.documentElement.classList.add('dark');
                 }
-              } catch(e) {}
-            })();
-          `
-        }} />
+              }
+            } catch(e) {}
+          })();
+        `
+      }} />
         <link
           rel="preconnect"
           href="https://fonts.googleapis.com"

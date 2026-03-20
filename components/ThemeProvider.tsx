@@ -18,10 +18,14 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const saved = localStorage.getItem('theme');
-  if (saved === 'dark') {
+ if (saved === 'dark') {
     setDark(true);
+  } else if (saved === 'light') {
+    setDark(false);
+  } else {
+    // нет сохранённой — системные настройки
+    setDark(window.matchMedia('(prefers-color-scheme: dark)').matches);
   }
-    setMounted(true);
   }, []);
 
   useEffect(() => {
