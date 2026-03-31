@@ -26,6 +26,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     // нет сохранённой — системные настройки
     setDark(window.matchMedia('(prefers-color-scheme: dark)').matches);
   }
+  setMounted(true);
   }, []);
 
   useEffect(() => {
