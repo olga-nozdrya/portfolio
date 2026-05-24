@@ -1,229 +1,257 @@
 'use client';
 
-import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import ThemeBtn from './ThemeBtn';
-import PhoneMockup from './PhoneMockup';
-import ScreenPh from './ScreenPh';
-import ImageModal from './ImageModal';
-import { CASES, CASE_SCREENS } from '@/lib/data';
-import type { CaseData } from '@/lib/data';
-import ContactBlock from './ContactSection';
+import ContactSection from './ContactSection';
+import { CaseData, CaseBlock } from '@/lib/data';
 
-interface ModalItem { icon: string; label: string; }
-
-interface Props {
-  c: CaseData;
-}
-
-export default function CasePageClient({ c }: Props) {
+export default function CasePageClient({ c }: { c: CaseData }) {
   const router = useRouter();
-  const [zoom, setZoom] = useState<ModalItem | null>(null);
-
-  const nextCase = c.next ? CASES.find((x) => x.id === c.next) : null;
-  const prevCase = c.prev ? CASES.find((x) => x.id === c.prev) : null;
-  const caseScreens = CASE_SCREENS[c.id] || [];
 
   return (
-    <>
-      {zoom && <ImageModal item={zoom} onClose={() => setZoom(null)} />}
+    <div className="cd-page">
+      {/* Nav */}
+      <nav className="cp-nav">
+        <button className="cp-back" onClick={() => router.push('/')}>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <path d="M11 7H3M3 7L6 4M3 7L6 10" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+          На главную
+        </button>
+        <span className="cp-logo">Оля Солонина · Портфолио</span>
+        <div className="cp-nav-actions"><ThemeBtn /></div>
+      </nav>
 
-      <div style={{ background: 'var(--bg)', minHeight: '100vh' }}>
-        {/* Nav */}
-        <nav className="cp-nav">
-          <button className="cp-back" onClick={() => router.push('/')}>
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-              <path
-                d="M11 7H3M3 7L6 4M3 7L6 10"
-                stroke="currentColor"
-                strokeWidth="1.4"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-            На главную
-          </button>
-          <span className="cp-logo">Оля Солонина · Портфолио</span>
-          <div className="cp-nav-actions">
-            <ThemeBtn />
+      {/* Content */}
+      <div className="cd-content">
+        {c.blocks.map((block, i) => renderBlock(block, i))}
+      </div>
+    </div>
+  );
+}
+
+function renderBlock(block: CaseBlock, i: number) {
+  switch (block.type) {
+
+    case 'heading':
+      return (
+        <div key={i} className="cd-heading-row">
+          <div className="cd-heading-left">
+            <h1 className="cd-h1">{block.h1}</h1>
+            <p className="cd-category">{block.category}</p>
           </div>
-        </nav>
+          <p className="cd-intro">{block.intro}</p>
+        </div>
+      );
 
-        {/* Body */}
-        <div className="cp-body">
-          <p className="cd-cat">{c.category}</p>
-          <h1 className="cd-h1">{c.title}</h1>
-          <p className="cd-sub">{c.subtitle}</p>
+    case 'hero':
+      return (
+        <div key={i} className="cd-hero">
+          <img src={block.src} alt="" />
+        </div>
+      );
 
-          {/* Meta strip */}
-          <div className="cd-meta">
-            <div className="cd-mc">
-              <p className="cd-mv">{c.role}</p>
-              <p className="cd-ml">Роль</p>
-            </div>
-            <div className="cd-mc">
-              <p className="cd-mv">{c.period}</p>
-              <p className="cd-ml">Период</p>
-            </div>
-            {c.team ? (
-              <div className="cd-mc">
-                  <p className="cd-mv">{c.team}</p>
-                  <p className="cd-ml">Команда</p>
-                </div>) : (
-                  ''
-              )}
+    case 'metrics':
+      return (
+        <div key={i} className="cd-section-row">
+          <h2 className="cd-section-label">{block.label}</h2>
+          <div className="cd-metrics">
+            {block.items.map((m, j) => (
+              <div key={j} className="cd-metric-card">
+                <div className="cd-metric-value">{m.value}</div>
+                <div className="cd-metric-label">{m.label}</div>
+              </div>
+            ))}
           </div>
+        </div>
+      );
 
-          {/* Hero visual */}
-            <div className={`cd-hero`}>
-              {c.cover ? (
-                <img
-                  src={c.cover}
-                  alt={c.title}
-                />
-              ) : (
-                <PhoneMockup variant={c.variant} />
-              )}
+    case 'role':
+      return (
+        <div key={i} className="cd-section-row">
+          <h2 className="cd-section-label">Моя роль</h2>
+          <div className="cd-divider-list">
+            {block.items.map((item, j) => (
+              <div key={j} className="cd-divider-item">
+                <p>{item}</p>
+                <div className="cd-hr" />
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+
+    case 'problem':
+      return (
+        <div key={i} className="cd-section-row">
+          <h2 className="cd-section-label">Проблема</h2>
+          <div className="cd-problem-content">
+            {block.text && <p className="cd-body-text">{block.text}</p>}
+            <div className="cd-cards">
+              {block.cards?.map((card, j) => (
+                <div key={j} className="cd-card">
+                  <div className="cd-card-title">{card.title}</div>
+                  <div className="cd-card-body">{card.body}</div>
+                </div>
+              ))}
             </div>
+          </div>
+        </div>
+      );
 
-          {/* Text sections */}
-          {c.sections.map((s, i) => (
-            <div key={i} className="cd-sec">
-              <h2>{s.h2}</h2>
-              {s.body?.map((p, j) => <p key={j}>{p}</p>)}
+    case 'quote':
+      return (
+        <p key={i} className="cd-quote">{block.text}</p>
+      );
+
+    case 'research':
+      return (
+        <div key={i} className="cd-section-row">
+          <h2 className="cd-section-label">{block.label}</h2>
+          <div className="cd-research-sections">
+            {block.sections.map((s, j) => (
+              <div key={j} className="cd-research-item">
+                <h3 className="cd-h3">{s.h3}</h3>
+                <p className="cd-body-text" dangerouslySetInnerHTML={{ __html: s.body }} />
+                {s.list && s.list.type == 'bullet' && (
+                  <ul className="cd-list">
+                    {s.list.items.map((li, k) => <li key={k}>{li}</li>)}
+                  </ul>
+                )}
+                {s.list && s.list.type == 'stroke' && (
+                  <div className="cd-divider-list">
+                    {s.list.items.map((item, j) => (
+                      <div key={j} className="cd-divider-item">
+                        <p>{item}</p>
+                        <div className="cd-hr" />
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+
+      case 'numbered-list':
+      return (
+        <div key={i} className="cd-section-row">
+          <h2 className="cd-section-label">{block.label}</h2>
+          <div className="cd-divider-list">
+            {block.items.map((item, j) => (
+              <div key={j} className="cd-divider-item">
+                <p>{item}</p>
+                <div className="cd-hr" />
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+
+    case 'shot':
+    return (
+        <div key={i} className="cd-before">
+          <div className="cd-shot">
+            <img src={block.src} alt="" />
+          </div>
+        </div>
+      );  
+
+    case 'process':
+      return (
+        <div key={i} className="cd-section-row">
+          <h2 className="cd-section-label">Что было сделано</h2>
+          <div className="cd-process-sections">
+            {block.sections.map((s, j) => (
+              <div key={j} className="cd-process-item">
+                <h3 className="cd-h3">{s.h3}</h3>
+                <div className="cd-divider-list">
+                  {s.items.map((item, k) => (
+                    <div key={k} className="cd-divider-item">
+                      <p>{item}</p>
+                      <div className="cd-hr" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+
+    case 'before':
+      return (
+        <div key={i} className="cd-before">
+          <h2 className="cd-section-label-full">{block.label}</h2>
+          <div className="cd-shot">
+            <img src={block.src} alt="" />
+          </div>
+        </div>
+      );
+
+    case 'solution-group':
+  return (
+    <div key={i} className="cd-solutions">
+      {block.sections.map((s, j) => (
+        <div key={j} className="cd-solution">
+          {j === 0 && (
+            <div className="cd-solution-header">
+              <h2 className="cd-section-label">Решение</h2>
+              <div className="cd-solution-header-right">
+                <h3 className="cd-solution-h3">{s.h3}</h3>
+                <p className="cd-solution-desc">{s.description}</p>
+              </div>
+            </div>
+          )}
+          {j > 0 && (
+            <div className="cd-solution-header">
+              <div className="cd-solution-header-left" />
+              <div className="cd-solution-header-right">
+                <h3 className="cd-solution-h3">{s.h3}</h3>
+                <p className="cd-solution-desc">{s.description}</p>
+              </div>
+            </div>
+          )}
+          {s.shots?.map((shot, k) => (
+            <div key={k} className="cd-shot">
+              {shot.screens.map((screen, l) => (
+                <img key={l} src={screen.src} alt="" className={`cd-shot-screen cd-shot-screen--${screen.position || 'center'}`} />
+              ))}
             </div>
           ))}
 
-          {/* Process sections */}
-         {c.sections2[0] && (
-  <div className="cd-sec">
-    <h2>{c.sections2[0].h2}</h2>
-    <div className="cd-steps">
-      {(c.sections2[0].items as any[])?.map((item, j) => {
-        // если это группа (объект с label и items)
-        if (typeof item === 'object' && 'label' in item) {
-          return (
-            <div key={j} className="cd-impr">
-              <div className="cd-step-group-label">{item.label}</div>
-                {item.items.map((text: string, k: number) => (
-                  <div key={k} className="cd-impr-item">
-                    <div className="cd-impr-dot" />
-                    <div className="cd-impr-text">{text}</div>
-                  </div>
-                ))}
-            </div>
-          );
-        }
-        // если это просто строка (старый формат)
-        return (
-          <div key={j} className="cd-impr-item">
-            <div className="cd-impr-dot" />
-            <div className="cd-impr-text">{item}</div>
-          </div>
-        );
-      })}
-    </div>
-  </div>
-)}
-        <div className="cd-sec">
-          {/* Скрины после процесса */}
-          {caseScreens[0] && (
-            <div className="cd-screens">
-              <h2>Финальные макеты</h2> 
-              <div className="cd-hl">
-                <p>{'Гипотеза 1'}</p>
-                <div className="cd-hl-text">{caseScreens[0].label}</div>
-              </div>
-              <div className={`cd-screens-grid ${caseScreens[0].cols}`}>
-                {caseScreens[0].items.map((s, i) => (
-                  <ScreenPh key={i} {...s} onZoom={setZoom} />
-                ))}
-              </div>
-            </div>
-          )}
-
-          {caseScreens[1] && (
-            <div className="cd-screens">
-              <div className="cd-hl">
-                <p>{'Гипотеза 2'}</p>
-                <div className="cd-hl-text">{caseScreens[1].label}</div>
-              </div>
-              <div className={`cd-screens-grid ${caseScreens[1].cols}`}>
-                {caseScreens[1].items.map((s, i) => (
-                  <ScreenPh key={i} {...s} onZoom={setZoom} />
-                ))}
-              </div>
-            </div>
-          )}
-
-          
-          {caseScreens[2] && (
-            <div className="cd-screens">
-              <div className="cd-hl">
-                <p>{'Гипотеза 3'}</p>
-                <div className="cd-hl-text">{caseScreens[2].label}</div>
-              </div>
-              <div className={`cd-screens-grid ${caseScreens[2].cols}`}>
-                {caseScreens[2].items.map((s, i) => (
-                  <ScreenPh key={i} {...s} onZoom={setZoom} />
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-
-
-
-{/* Улучшения (вторая секция из sections2) */}
-{c.sections2[1] && (
-  <div className="cd-sec">
-    <h2>{c.sections2[1].h2}</h2>
-    <div className="cd-impr">
-      {(c.sections2[1].items as string[])?.map((item, j) => (
-        <div key={j} className="cd-impr-item">
-          <div className="cd-impr-dot" />
-          <div className="cd-impr-text">{item}</div>
+          {s.videos?.map((video, k) => (
+                <div key={k} className="cd-shot">
+                  {video.item.map((vid, l) => (
+                    <video
+                      src={vid.src}
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                    />
+                  ))}
+                </div>
+              ))}
         </div>
       ))}
     </div>
-  </div>
-)}
-
-          {/* Results */}
-           {c.results && (
-            <div className="cd-sec">
-              <h2>Результаты</h2>
-              <div className="cd-res">
-                {c.results && c.results.map((r, i) => (
-                  <div key={i} className="cd-ri">
-                    <div className="cd-rn">{r.n}</div>
-                    <div className="cd-rd">{r.d}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-          {/* Contact footer */}
-          <div className="cp-contacts">
-            <p className="cp-contacts-h">Свяжитесь со мной</p>
-            <p className="cp-contacts-sub">             
-              Буду рада познакомиться и обсудить новые проекты
-            </p>
-            <div className="cp-contacts-links">
-            <a className="pf-cl pf-cl-solid" href="https://t.me/o_solonina" target="_blank" rel="noreferrer">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
-              Telegram
-            </a>
-            <a className="pf-cl pf-cl-outline" href="https://www.linkedin.com/in/olga-solonina/" target="_blank" rel="noreferrer">
-              LinkedIn
-            </a>
-            <a className="pf-cl pf-cl-outline" href="https://docs.google.com/document/d/1oSTWz_7VED2nQaxohUJ1fyDT70CnOkDD/edit" target="_blank" rel="noreferrer">
-              Резюме
-            </a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </>
   );
+
+    case 'improvements':
+      return (
+        <div key={i} className="cd-section-row">
+          <h2 className="cd-section-label">Возможные улучшения</h2>
+          <p className="cd-body-text cd-body-text--right">{block.text}</p>
+        </div>
+      );
+
+    case 'contacts':
+      return <ContactSection key={i} />;
+
+    default:
+      return null;
+  }
 }

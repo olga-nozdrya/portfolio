@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import LeftPanel from './LeftPanel';
 import ThemeBtn from './ThemeBtn';
 import CaseCard from './CaseCard';
@@ -66,91 +66,72 @@ function ExpRow({ e, i }: { e: typeof EXP[0]; i: number }) {
 }
 
 export default function HomeClient() {
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const [active, setActive] = useState('cases');
   const [burger, setBurger] = useState(false);
+  const tabScrollRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const layoutRef = useRef<HTMLDivElement>(null);
 
+  // Scroll wheel on left panel → forward to active tab
   useEffect(() => {
-    const container = scrollRef.current;
-    if (!container) return;
-    const els = NAV_ITEMS.map(({ id }) => sectionRefs.current[id]).filter(Boolean) as HTMLDivElement[];
-    if (!els.length) return;
-    const obs = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) setActive(entry.target.id);
-        });
-      },
-      { root: container, threshold: 0.2 }
-    );
-    els.forEach((el) => obs.observe(el));
-    return () => obs.disconnect();
+    const layout = layoutRef.current;
+    if (!layout) return;
+
+    const onWheel = (e: WheelEvent) => {
+      const isMobile = window.innerWidth < 900;
+      if (isMobile) return;
+
+      // Only intercept if target is inside left panel
+      const leftPanel = layout.querySelector('.pf-left');
+      if (!leftPanel?.contains(e.target as Node)) return;
+
+      e.preventDefault();
+      const tabEl = tabScrollRefs.current[active];
+      if (tabEl) tabEl.scrollBy({ top: e.deltaY, behavior: 'auto' });
+    };
+
+    layout.addEventListener('wheel', onWheel, { passive: false });
+    return () => layout.removeEventListener('wheel', onWheel);
+  }, [active]);
+
+  const switchTab = useCallback((id: string) => {
+    setActive(id);
+    setBurger(false);
+    // Reset scroll to top when switching
+    setTimeout(() => {
+      const el = tabScrollRefs.current[id];
+      if (el) el.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 0);
   }, []);
 
-  const scrollTo = (id: string) => {
-    const el = sectionRefs.current[id];
-    if (!el) return;
-    const isMobile = window.innerWidth < 900;
-    if (isMobile) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    } else {
-      const container = scrollRef.current;
-      if (container) container.scrollTo({ top: el.offsetTop - 20, behavior: 'smooth' });
-    }
-    setBurger(false);
-  };
-
   return (
-    <div className="pf-layout">
+    <div className="pf-layout" ref={layoutRef}>
       {/* Mobile topbar */}
-    <div className="mob-topbar">
-      <div className="burger-theme-mobile">
-        <ThemeBtn />
-      </div>
-      <div>
-        <button className={`burger-btn${burger ? ' burger-open' : ''}`} onClick={() => setBurger((b) => !b)}>
-          <span /><span /><span />
-        </button>
-        {burger && (
-          <div className="burger-menu open">
-            {NAV_ITEMS.map((n) => (
-              <button
-                key={n.id}
-                className={`bm-link`}
-                onClick={() => scrollTo(n.id)}
-              >
-                {n.label}
-              </button>
-            ))}
-          </div>
-        )}
-      </div>
-    </div>
-
-      {/* <div className="mob-topbar">
-  <div className="burger-theme-mobile">
-    <ThemeBtn />
-  </div>
-  <div style={{ position: 'relative' }}>
-    <button className={`burger-btn${burger ? ' burger-open' : ''}`} onClick={() => setBurger((b) => !b)}>
-      <span /><span /><span />
-    </button>
-    {burger && (
-      <div className="burger-menu open">
-        {NAV_ITEMS.map((n) => (
+      <div className="mob-topbar">
+        <div className="burger-theme-mobile">
+          <ThemeBtn />
+        </div>
+        <div>
           <button
-            key={n.id}
-            className={`bm-link${active === n.id ? ' active' : ''}`}
-            onClick={() => scrollTo(n.id)}
+            className={`burger-btn${burger ? ' burger-open' : ''}`}
+            onClick={() => setBurger((b) => !b)}
           >
-            {n.label}
+            <span /><span /><span />
           </button>
-        ))}
+          {burger && (
+            <div className="burger-menu open">
+              {NAV_ITEMS.map((n) => (
+                <button
+                  key={n.id}
+                  className={`bm-link${active === n.id ? ' active' : ''}`}
+                  onClick={() => switchTab(n.id)}
+                >
+                  {n.label}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
-    )}
-  </div>
-</div> */}
 
       {/* Left panel */}
       <LeftPanel />
@@ -164,7 +145,7 @@ export default function HomeClient() {
               <button
                 key={n.id}
                 className={`pf-nav-link${active === n.id ? ' active' : ''}`}
-                onClick={() => scrollTo(n.id)}
+                onClick={() => switchTab(n.id)}
               >
                 {n.label}
               </button>
@@ -175,75 +156,61 @@ export default function HomeClient() {
           </div>
         </div>
 
-        {/* Scrollable content */}
-        <div className="pf-scroll" ref={scrollRef}>
+        {/* Tab panels */}
+        <div className="pf-tabs">
           {/* Cases */}
           <div
-            id="cases"
-            className="pf-section"
-            ref={(el) => { sectionRefs.current['cases'] = el; }}
+            className={`pf-tab${active === 'cases' ? ' pf-tab--active' : ''}`}
+            ref={(el) => { tabScrollRefs.current['cases'] = el; }}
           >
-            {CASES.map((c) => (
-              <CaseCard key={c.id} c={c} />
-            ))}
+            <div className="pf-section">
+              {CASES.map((c) => (
+                <CaseCard key={c.id} c={c} />
+              ))}
+              <div className="mob-contact">
+                <ContactSection />
+              </div>
+            </div>
           </div>
 
           {/* Experience */}
           <div
-            id="exp"
-            className="pf-section"
-            ref={(el) => { sectionRefs.current['exp'] = el; }}
+            className={`pf-tab${active === 'exp' ? ' pf-tab--active' : ''}`}
+            ref={(el) => { tabScrollRefs.current['exp'] = el; }}
           >
-            <h2 className="sec-heading">Опыт</h2>
-            {EXP.map((e, i) => (
-              <ExpRow key={i} e={e} i={i} />
-            ))}
+            <div className="pf-section">
+              {EXP.map((e, i) => (
+                <ExpRow key={i} e={e} i={i} />
+              ))}
+              <div className="mob-contact">
+                <ContactSection />
+              </div>
+            </div>
           </div>
-
-          
 
           {/* Skills */}
           <div
-            id="skills"
-            className="pf-section"
-            ref={(el) => { sectionRefs.current['skills'] = el; }}
+            className={`pf-tab${active === 'skills' ? ' pf-tab--active' : ''}`}
+            ref={(el) => { tabScrollRefs.current['skills'] = el; }}
           >
-            <h2 className="sec-heading">Навыки</h2>
-            <div className="sk-group">
-              <div className="sk-title">Hard skills</div>
-              {HARD.map((s, i) => (
-                <SkRow key={s} label={s} delay={i * 40} />
-              ))}
-            </div>
-            <div className="sk-group">
-              <div className="sk-title">Soft skills</div>
-              {SOFT.map((s, i) => (
-                <SkRow key={s} label={s} delay={i * 40} />
-              ))}
-            </div>
-          </div>
-
-          <div className="mob-contact">
-            <ContactSection />
-          </div>
-          {/* CTA */}
-{/*           <div className="pf-section" style={{ paddingTop: 40, paddingBottom: 0 }}>
-            <div className="cta-block">
-              <span className="cta-wave">👋</span>
-              <p className="cta-h">Давайте сделаем что-нибудь&nbsp;крутое вместе</p>
-              <p className="cta-sub">
-                Открыта к новым проектам и интересным задачам. Напишите — обсудим вашу задачу.
-              </p>
-              <div className="cta-links">
-                <a className="pf-cl pf-cl-solid" href="https://t.me/o_solonina" target="_blank" rel="noreferrer">
-                  Telegram
-                </a>
-                <a className="pf-cl pf-cl-outline" href="https://www.linkedin.com/in/olga-solonina/" target="_blank" rel="noreferrer">
-                  LinkedIn
-                </a>
+            <div className="pf-section">
+              <div className="sk-group">
+                <div className="sk-title">Hard skills</div>
+                {HARD.map((s, i) => (
+                  <SkRow key={s} label={s} delay={i * 40} />
+                ))}
+              </div>
+              <div className="sk-group">
+                <div className="sk-title">Soft skills</div>
+                {SOFT.map((s, i) => (
+                  <SkRow key={s} label={s} delay={i * 40} />
+                ))}
+              </div>
+              <div className="mob-contact">
+                <ContactSection />
               </div>
             </div>
-          </div> */}
+          </div>
         </div>
       </div>
     </div>
