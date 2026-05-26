@@ -16,8 +16,8 @@ export default function ContactSection() {
         <a className="pf-cl pf-cl-outline" href="https://www.linkedin.com/in/olga-solonina/" target="_blank" rel="noreferrer">
           LinkedIn
         </a>
-        <a className="pf-cl pf-cl-outline" href="https://docs.google.com/document/d/1oSTWz_7VED2nQaxohUJ1fyDT70CnOkDD/edit" target="_blank" rel="noreferrer">
-          Резюме
+        <a className="pf-cl pf-cl-outline" href="https://drive.google.com/file/d/1Zt_NZOYc2WnPMOrhgogF5YmTm01D6XVB/view?usp=drive_link" target="_blank" rel="noreferrer">
+          CV.pdf
         </a>
       </div>
     </div>

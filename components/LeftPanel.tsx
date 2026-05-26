@@ -1,53 +1,104 @@
 'use client';
+import { useEffect, useState } from 'react';
 
-import AudioPlayer from './AudioPlayer';
-import ThemeBtn from './ThemeBtn';
+const FULL_TEXT = 'Привет!\nМеня зовут Оля\nя продуктовый\nдизайнер';
 
-export default function LeftPanel() {
+export default function LeftPanel({ onDone }: { onDone?: () => void }) {
+  const [displayed, setDisplayed] = useState('');
+  const [done, setDone] = useState(false);
+  const [showDesc, setShowDesc] = useState(false);
+
+useEffect(() => {
+  const already = sessionStorage.getItem('typed');
+  
+  if (already) {
+    // уже показывали — сразу показываем всё
+    setDisplayed(FULL_TEXT);
+    setDone(true);
+    setShowDesc(true);
+    onDone?.();
+    return;
+  }
+
+  let i = 0;
+  const interval = setInterval(() => {
+    i++;
+    setDisplayed(FULL_TEXT.slice(0, i));
+    if (i >= FULL_TEXT.length) {
+      clearInterval(interval);
+      setDone(true);
+      setTimeout(() => {
+        setShowDesc(true);
+        onDone?.();
+        sessionStorage.setItem('typed', '1');
+      }, 300);
+    }
+  }, 45);
+  return () => clearInterval(interval);
+}, []);
+
   return (
     <aside className="pf-left">
-      <div>
+      <div>  
         <div className="pf-name-block">
-          {/* фото только для мобилки — сверху */}
-          <span className="pf-photo-mobile">
-            <img className="img-bw" src="/photo-bw.png" alt="Оля" />
-            <img className="img-color" src="/photo-color.png" alt="Оля" />
-          </span>
-          <div className="pf-line">
-            <span className="pf-hi">Привет!</span>
-          </div>
-          <div className="pf-line">
-            <span className="pf-name-txt">Меня зовут </span>
-            <span className="pf-photo-wrap">  {/* скрывается на мобилке */}
-              <img className="img-bw" src="/photo-bw.png" alt="Оля" />
-              <img className="img-color" src="/photo-color.png" alt="Оля" />
-            </span>
-            <span className="pf-name-txt"> Оля</span>
-          </div>
-          <div className="pf-line">
-            <span className="pf-role">я продуктовый<br />дизайнер</span>
-          </div>
+          <TypedText displayed={displayed} done={done} />
         </div>
-
-        <p className="pf-desc">
-          с опытом в продукте и бэкграундом в&nbsp;разработке — соединяю системность, UX и&nbsp;аккуратный визуал в&nbsp;продуманных интерфейсах
+        <p className={`pf-desc pf-desc--anim${showDesc ? ' pf-desc--visible' : ''}`}>
+          с опытом в продукте и бэкграундом<br />
+          в разработке — соединяю системность, UX<br />
+          и аккуратный визуал в продуманных интерфейсах
         </p>
-
-        {/*<AudioPlayer />*/}
       </div>
-
-<div className="pf-contacts">
-  <a className="pf-cl pf-cl-solid" href="https://t.me/o_solonina" target="_blank" rel="noreferrer">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
-    Telegram
-  </a>
-  <a className="pf-cl pf-cl-outline" href="https://www.linkedin.com/in/olga-solonina/" target="_blank" rel="noreferrer">
-    LinkedIn
-  </a>
-  <a className="pf-cl pf-cl-outline" href="https://docs.google.com/document/d/1oSTWz_7VED2nQaxohUJ1fyDT70CnOkDD/edit" target="_blank" rel="noreferrer">
-    Резюме
-  </a>
-</div>
+      <div className={`pf-contacts pf-contacts--anim${showDesc ? ' pf-contacts--visible' : ''}`}>
+        <a className="pf-cl pf-cl-solid" href="https://t.me/o_solonina" target="_blank" rel="noreferrer">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="22" y1="2" x2="11" y2="13"/>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+          </svg>
+          Telegram
+        </a>
+        <a className="pf-cl pf-cl-outline" href="https://www.linkedin.com/in/olga-solonina/" target="_blank" rel="noreferrer">
+          LinkedIn
+        </a>
+        <a className="pf-cl pf-cl-outline" href="https://drive.google.com/file/d/1Zt_NZOYc2WnPMOrhgogF5YmTm01D6XVB/view?usp=drive_link" target="_blank" rel="noreferrer">
+          CV.pdf
+        </a>
+      </div>
     </aside>
+  );
+}
+
+function TypedText({ displayed, done }: { displayed: string; done: boolean }) {
+  const lines = displayed.split('\n');
+
+  return (
+    <div className="pf-typed">
+      {lines.map((line, i) => {
+        const isLast = i === lines.length - 1;
+        let cls = 'pf-name-txt';
+        if (i === 0) cls = 'pf-hi';
+        if (i >= 2) cls = 'pf-role';
+
+        if (i === 1) {
+          return (
+            <div key={i} className="pf-line pf-line--photo">
+              <span className="pf-name-txt">{line}</span>
+              <span className={`pf-photo-wrap${done ? ' pf-photo-wrap--fade' : ' pf-photo-wrap--hidden'}`}>
+                <img className="img-bw" src="/photo-bw.png" alt="Оля" />
+                <img className="img-color" src="/photo-color.png" alt="Оля" />
+              </span>
+              {isLast && <span className={`pf-cursor${done ? ' pf-cursor--done' : ''}`} />}
+            </div>
+          );
+        }
+
+        return (
+          <div key={i} className="pf-line">
+            <span className={cls} style={{ whiteSpace: 'pre-line' }}>{line}</span>
+            {isLast && <span className={`pf-cursor${done ? ' pf-cursor--done' : ''}`} />}
+          </div>
+        );
+      })}
+    </div>
   );
 }
