@@ -112,7 +112,7 @@ function renderBlock(block: CaseBlock, i: number) {
             {block.sections.map((s, j) => (
               <div key={j} className="cd-research-item">
                 <h3 className="cd-h3">{s.h3}</h3>
-                <p className="cd-body-text" dangerouslySetInnerHTML={{ __html: s.body }} />
+                <p className="cd-body-text" dangerouslySetInnerHTML={{ __html: s.body ?? "" }} />
                 {s.list && s.list.type == 'bullet' && (
                   <ul className="cd-list">
                     {s.list.items.map((li, k) => <li key={k}>{li}</li>)}
@@ -225,6 +225,7 @@ function renderBlock(block: CaseBlock, i: number) {
                 <div key={k} className="cd-shot">
                   {video.item.map((vid, l) => (
                     <video
+                      key={l}
                       src={vid.src}
                       autoPlay
                       loop

@@ -15,8 +15,8 @@ export function generateMetadata({ params }: PageProps): Metadata {
   const c = CASES.find((x) => x.slug === params.slug);
   if (!c) return { title: 'Кейс не найден' };
   return {
-    title: `${c.title} — Ольга Солонина`,
-    description: c.subtitle,
+    title: `${c.slug} — Ольга Солонина`,
+    description: c.sub,
   };
 }
 
