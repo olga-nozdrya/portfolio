@@ -31,6 +31,9 @@ export default function SkeletonImage({ src, alt = '', style, className, objectF
         src={src}
         alt={alt}
         className={className}
+        loading="eager"
+        decoding="async"
+        fetchPriority="high"
         onLoad={() => setLoaded(true)}
         style={{
           width: '100%',

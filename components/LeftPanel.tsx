@@ -82,12 +82,14 @@ function TypedText({ displayed, done }: { displayed: string; done: boolean }) {
         if (i === 1) {
           return (
             <div key={i} className="pf-line pf-line--photo">
-              <span className="pf-name-txt">{line}</span>
+              <span className="pf-name-txt">
+                {line}
+                {isLast && <span className={`pf-cursor${done ? ' pf-cursor--done' : ''}`} />}
+              </span>
               <span className={`pf-photo-wrap${done ? ' pf-photo-wrap--fade' : ' pf-photo-wrap--hidden'}`}>
                 <img className="img-bw" src="/photo-bw.png" alt="Оля" />
                 <img className="img-color" src="/photo-color.png" alt="Оля" />
               </span>
-              {isLast && <span className={`pf-cursor${done ? ' pf-cursor--done' : ''}`} />}
             </div>
           );
         }
