@@ -7,6 +7,7 @@ import CaseCard from './CaseCard';
 import { CASES, CONCEPTS, EXP, HARD, TOOLS } from '@/lib/data';
 import ContactSection from './ContactSection';
 import CaseCursor from './CaseCursor';
+import SkeletonImage from './SkeletonImage';
 
 const NAV_ITEMS = [
   { id: 'cases', label: 'Кейсы' },
@@ -195,7 +196,7 @@ export default function HomeClient() {
                 <div className="cd-concepts-grid">
                   {CONCEPTS.map((c, i) => (
                     <div key={i} className={`cd-concept-item cd-concept-item--${c.cols || 1}`}>
-                      <img src={c.src} alt="" />
+                      <SkeletonImage src={c.src} />
                     </div>       
                   ))}
                 </div>
@@ -262,7 +263,7 @@ export default function HomeClient() {
           <div className="cd-concepts-grid">
             {CONCEPTS.map((c, i) => (
               <div key={i} className={`cd-concept-item cd-concept-item--${c.cols || 1}`}>
-                <img src={c.src} alt="" />
+                <SkeletonImage src={c.src} />
               </div>       
             ))}
           </div>
@@ -282,7 +283,7 @@ export default function HomeClient() {
                 ))}
               </div>
               <div className="sk-group">
-                <div className="sk-title">[Инструменты]</div>
+                <div className="sec-heading">Инструменты</div>
                 <div className="sk-group sk-group-tools">
                   {TOOLS.map((s, i) => (
                   <ToolRow key={i} label={s} delay={i * 40} />

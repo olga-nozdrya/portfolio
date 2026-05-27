@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import PhoneMockup from './PhoneMockup';
 import type { CaseData } from '@/lib/data';
 import { createPortal } from 'react-dom';
+import SkeletonImage from './SkeletonImage';
 
 interface Props {
   c: CaseData;
@@ -66,14 +67,15 @@ export default function CaseCard({ c }: { c: CaseData }) {
         onMouseLeave={hideCursor}>
         <div className="cc-vis">
           <div className='cc-vis-inner'>
-            {!loaded && <div className="skeleton cc-skeleton" />}
+            <SkeletonImage src={`/covers/${c.slug}.png`} alt={c.brand} objectFit="cover" />
+            {/* {!loaded && <div className="skeleton cc-skeleton" />}
             <img
               ref={imgRef}
               src={`/covers/${c.slug}.png`}
               alt={c.brand}
               onLoad={() => setLoaded(true)}
               style={{ opacity: loaded ? 1 : 0, transition: 'opacity 0.3s' }}
-            />
+            /> */}
           </div>
           <div className="cc-tags">
             {c.tags.map((t) => (

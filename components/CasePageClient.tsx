@@ -4,6 +4,8 @@ import { useRouter } from 'next/navigation';
 import ThemeBtn from './ThemeBtn';
 import ContactSection from './ContactSection';
 import { CaseData, CaseBlock } from '@/lib/data';
+import SkeletonImage from './SkeletonImage';
+import SkeletonVideo from './SkeletonVideo';
 
 export default function CasePageClient({ c }: { c: CaseData }) {
   const router = useRouter();
@@ -47,7 +49,7 @@ function renderBlock(block: CaseBlock, i: number) {
     case 'hero':
       return (
         <div key={i} className="cd-hero">
-          <img src={block.src} alt="" />
+          <SkeletonImage src={block.src} objectFit="cover" />
         </div>
       );
 
@@ -152,7 +154,7 @@ function renderBlock(block: CaseBlock, i: number) {
     case 'shot':
     return (
         <div key={i} className="cd-before">
-          <div className="cd-shot">
+          <div className="cd-hero">
             <img src={block.src} alt="" />
           </div>
         </div>
@@ -185,7 +187,7 @@ function renderBlock(block: CaseBlock, i: number) {
         <div key={i} className="cd-before">
           <h2 className="cd-section-label-full">{block.label}</h2>
           <div className="cd-shot">
-            <img src={block.src} alt="" />
+            <SkeletonImage src={block.src} objectFit="cover" />
           </div>
         </div>
       );
@@ -216,23 +218,16 @@ function renderBlock(block: CaseBlock, i: number) {
           {s.shots?.map((shot, k) => (
             <div key={k} className="cd-shot">
               {shot.screens.map((screen, l) => (
-                <img key={l} src={screen.src} alt="" className={`cd-shot-screen cd-shot-screen--${screen.position || 'center'}`} />
+                <SkeletonImage src={screen.src} objectFit="cover" key={k} className={`cd-shot-screen cd-shot-screen--${screen.position || 'center'}`} />
+            //    <img key={l} src={screen.src} alt="" className={`cd-shot-screen cd-shot-screen--${screen.position || 'center'}`} />
               ))}
             </div>
           ))}
 
           {s.videos?.map((video, k) => (
-                <div key={k} className="cd-shot">
+                <div key={k} className="cd-shot cd-shot--video">
                   {video.item.map((vid, l) => (
-                    <video
-                      key={l}
-                      src={vid.src}
-                      autoPlay
-                      loop
-                      muted
-                      playsInline
-                      style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-                    />
+                    <SkeletonVideo key={l} src={vid.src} />
                   ))}
                 </div>
               ))}

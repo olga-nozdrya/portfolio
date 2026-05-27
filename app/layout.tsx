@@ -46,6 +46,7 @@ export default function RootLayout({
         />
       </head>
       <body>
+        {/* <LoadingScreen /> */}
         <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>
