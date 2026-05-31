@@ -6,6 +6,7 @@ import ContactSection from './ContactSection';
 import { CaseData, CaseBlock } from '@/lib/data';
 import SkeletonImage from './SkeletonImage';
 import SkeletonVideo from './SkeletonVideo';
+import Image from 'next/image';
 
 export default function CasePageClient({ c }: { c: CaseData }) {
   const router = useRouter();
@@ -155,7 +156,11 @@ function renderBlock(block: CaseBlock, i: number) {
     return (
         <div key={i} className="cd-before">
           <div className="cd-hero">
-            <img src={block.src} alt="" />
+            <Image src={block.src} 
+                quality={100}
+    width={1280}
+    height={720}
+            alt="" />
           </div>
         </div>
       );  

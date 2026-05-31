@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
+import Image from 'next/image'
 
 interface Props {
   src: string;
@@ -8,9 +9,10 @@ interface Props {
   className?: string;
   objectFit?: 'cover' | 'contain';
   wrapperStyle?: React.CSSProperties;
+  priority?: boolean;
 }
 
-export default function SkeletonImage({ src, alt = '', style, className, objectFit = 'cover', wrapperStyle }: Props) {
+export default function SkeletonImage({ src, alt = '', style, className, objectFit = 'cover', wrapperStyle, priority }: Props) {
   const imgRef = useRef<HTMLImageElement>(null);
   const [loaded, setLoaded] = useState(false);
 
@@ -26,25 +28,17 @@ export default function SkeletonImage({ src, alt = '', style, className, objectF
           style={{ position: 'absolute', inset: 0, borderRadius: 'inherit' }}
         />
       )}
-      <img
-        ref={imgRef}
-        src={src}
-        alt={alt}
-        className={className}
-        loading="eager"
-        decoding="async"
-        fetchPriority="high"
-        onLoad={() => setLoaded(true)}
-        style={{
-          width: '100%',
-          height: '100%',
-          objectFit,
-          display: 'block',
-          opacity: loaded ? 1 : 0,
-          transition: 'opacity 0.4s ease',
-          ...style,
-        }}
-      />
+    <Image
+    ref={imgRef as any}
+    src={src}
+    alt={alt}
+    quality={100}
+    width={1280}
+    height={720}
+    style={{ objectFit, opacity: loaded ? 1 : 0, transition: 'opacity 0.4s ease' }}
+    onLoad={() => setLoaded(true)}
+   // priority={priority}
+    />
     </div>
   );
 }

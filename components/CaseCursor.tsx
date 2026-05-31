@@ -22,7 +22,7 @@ export default function CaseCursor() {
       className={`case-cursor${visible ? ' case-cursor--visible' : ''}`}
       id="case-cursor"
     >
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2.5 11.5L11.5 2.5M11.5 2.5H4.5M11.5 2.5V9.5" stroke="currentColor" strokeWidth="1.4" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2.5 11.5L11.5 2.5M11.5 2.5H4.5M11.5 2.5V9.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" stroke-linejoin="round"></path></svg>
     </div>
 
   );
