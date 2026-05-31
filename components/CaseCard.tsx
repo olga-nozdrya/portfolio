@@ -67,7 +67,7 @@ export default function CaseCard({ c }: { c: CaseData }) {
         onMouseLeave={hideCursor}>
         <div className="cc-vis">
           <div className='cc-vis-inner'>
-            <SkeletonImage src={`/covers/${c.slug}.png`} alt={c.brand} objectFit="cover" priority={c.id === 1} />
+            <SkeletonImage src={`/covers/${c.slug}.webp`} alt={c.brand} objectFit="cover" priority={c.id === 1} />
           </div>
           <div className="cc-tags">
             {c.tags.map((t) => (
