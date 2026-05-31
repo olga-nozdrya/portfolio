@@ -87,8 +87,8 @@ function TypedText({ displayed, done }: { displayed: string; done: boolean }) {
                 {isLast && <span className={`pf-cursor${done ? ' pf-cursor--done' : ''}`} />}
               </span>
               <span className={`pf-photo-wrap${done ? ' pf-photo-wrap--fade' : ' pf-photo-wrap--hidden'}`}>
-                <img className="img-bw" src="/photo-bw.png" alt="Оля" />
-                <img className="img-color" src="/photo-color.png" alt="Оля" />
+                <img className="img-bw" src="/photo-bw.webp" alt="Оля" />
+                <img className="img-color" src="/photo-color.webp" alt="Оля" />
               </span>
             </div>
           );
