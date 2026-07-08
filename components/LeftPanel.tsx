@@ -60,7 +60,7 @@ useEffect(() => {
         <a className="pf-cl pf-cl-outline" href="https://www.linkedin.com/in/olga-solonina/" target="_blank" rel="noreferrer">
           LinkedIn
         </a>
-        <a className="pf-cl pf-cl-outline" href="https://drive.google.com/file/d/1Zt_NZOYc2WnPMOrhgogF5YmTm01D6XVB/view?usp=drive_link" target="_blank" rel="noreferrer">
+        <a className="pf-cl pf-cl-outline" href="https://drive.google.com/file/d/1BUMoFatBQO3ibI7DqlM9JpfQ0Pejfr_s/view?usp=sharing" target="_blank" rel="noreferrer">
           CV.pdf
         </a>
       </div>
